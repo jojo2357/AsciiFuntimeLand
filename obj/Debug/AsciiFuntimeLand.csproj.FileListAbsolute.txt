@@ -1,0 +1,9 @@
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\bin\Debug\AsciiFuntimeLand.exe.config
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\bin\Debug\AsciiFuntimeLand.exe
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\bin\Debug\AsciiFuntimeLand.pdb
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\obj\Debug\AsciiFuntimeLand.csproj.AssemblyReference.cache
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\obj\Debug\AsciiFuntimeLand.Properties.Resources.resources
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\obj\Debug\AsciiFuntimeLand.csproj.GenerateResource.cache
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\obj\Debug\AsciiFuntimeLand.csproj.CoreCompileInputs.cache
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\obj\Debug\AsciiFuntimeLand.exe
+C:\Users\Joey\Documents\GitHub\AsciiFuntimeLand\obj\Debug\AsciiFuntimeLand.pdb
