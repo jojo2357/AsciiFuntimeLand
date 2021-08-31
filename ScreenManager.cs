@@ -75,12 +75,14 @@ namespace AsciiFuntimeLand
 			base.OnShown(e);
 
 			RenderController.DoRendering(this, CreateGraphics());
+			RenderController.PostRendering(this, CreateGraphics());
 		}
 
 		private void DoPaint(object o, PaintEventArgs e)
 		{
 			e.Graphics.Clear(Color.Black);
 			RenderController.DoRendering(this, e.Graphics);
+			RenderController.PostRendering(this, e.Graphics);
 			//DrawString(e.Graphics);
 		}
 
@@ -95,8 +97,6 @@ namespace AsciiFuntimeLand
 				return;
 			cam.AddLooking(new Vector2(p.X, -p.Y));
 			Console.WriteLine(cam.Looking + " and " + cam.getLookingNoRot());
-			/*RenderController.PrepareRendering();
-			Invoke(_callInvoke);*/
 			RequestRedraw();
 		}
 

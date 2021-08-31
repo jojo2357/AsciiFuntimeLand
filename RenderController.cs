@@ -105,6 +105,11 @@ namespace AsciiFuntimeLand
 			beingModified = false;
 		}
 
+		public static void PostRendering(ScreenManager form, Graphics formGraphics)
+		{
+			
+		}
+
 		public static Color createColor(int argb)
 		{
 			foreach (Color color in registeredColors)
