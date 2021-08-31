@@ -9,7 +9,32 @@ namespace AsciiFuntimeLand
 {
 	public class Camera
 	{
-		public Vector3 _looking;
+		public Vector3 Looking
+		{
+			get { return _looking; }
+			set
+			{
+				_looking = value;
+				_up = new Vector3((float) (Math.Sin((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)), 
+					(float) (Math.Cos((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)), 
+					(float) Math.Sin((_looking.Y + 90) * Math.PI / 180));
+				_right = Vector3.Cross(getLookingNoRot(), getUp());
+				_lookingResolved = new Vector3((float) (Math.Sin((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y) * Math.PI / 180)), 
+					(float) (Math.Cos((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y) * Math.PI / 180)), 
+					(float) Math.Sin((_looking.Y) * Math.PI / 180));
+				u = Vector3.Normalize(getRight());
+				v = Vector3.Normalize(_up);
+			}
+		}
+
+		private Vector3 _looking;
+
+		public Vector3 _up { get; private set; }
+		public Vector3 _right { get; private set; }
+		public Vector3 _lookingResolved { get; private set; }
+		
+		private Vector3 u;
+		private Vector3 v;
 
 		public Camera()
 		{
@@ -21,19 +46,17 @@ namespace AsciiFuntimeLand
 
 		private void setLooking(Vector3 value)
 		{
-			_looking = value;
+			Looking = value;
 		}
 
 		private Vector3 getUp()
 		{
-			return new Vector3((float) (Math.Sin((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)), 
-				(float) (Math.Cos((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)), 
-				(float) Math.Sin((_looking.Y + 90) * Math.PI / 180));
+			return _up;
 		}
 		
-		private Vector3 getLeft()
+		private Vector3 getRight()
 		{
-			return -Vector3.Cross(getUp(), getLookingNoRotUNMODIFIED());
+			return _right;
 		}
 
 		public Vector4 getLooking()
@@ -56,20 +79,14 @@ namespace AsciiFuntimeLand
 					(_looking.Y + offset) * Math.PI / 180), _looking.Z);
 		}
 
-		private Vector3 getLookingNoRotUNMODIFIED()
+		public Vector3 getLookingNoRot()
 		{
-			return new Vector3((float) (Math.Sin((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y) * Math.PI / 180)), 
-				(float) (Math.Cos((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y) * Math.PI / 180)), 
-				(float) Math.Sin((_looking.Y) * Math.PI / 180));
+			return _lookingResolved;
 		}
 
 		public Vector3 getLookingNoRot(Vector2 offset)
 		{
-			Vector3 normal = Vector3.Normalize(getLookingNoRotUNMODIFIED());
-			Vector3 u = Vector3.Normalize(getLeft());
-			Vector3 v = Vector3.Normalize(getUp());
-			Vector3 l = normal - u / 2 - v / 2;
-			return l + u * offset.X + v * offset.Y;
+			return _lookingResolved + u * offset.X + v * offset.Y;
 			/*return new Vector3((float) (Math.Sin((_looking.X + offset.X) * Math.PI / 180) * Math.Cos((_looking.Y + offset.Y) * Math.PI / 180)), 
 				(float) (Math.Cos((_looking.X + offset.X) * Math.PI / 180) * Math.Cos((_looking.Y + offset.Y) * Math.PI / 180)), 
 				(float) Math.Sin((_looking.Y + offset.Y) * Math.PI / 180));*/

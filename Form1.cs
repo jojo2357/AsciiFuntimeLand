@@ -40,7 +40,7 @@ namespace AsciiFuntimeLand
 			BackColor = Color.Black;
 			cam = new Camera();
 			base.Paint += DoPaint;
-			_drawFont = new System.Drawing.Font("Courier new", 8);
+			_drawFont = new System.Drawing.Font(FontFamily.GenericMonospace, 8);
 			_drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.White);
 			this.Size = new Size(600, 600);
 			KeyPreview = true;
@@ -116,8 +116,8 @@ namespace AsciiFuntimeLand
 			if (p.Equals(ZeroPoint))
 				return;
 			cam.AddLooking(new Vector2(p.X, -p.Y));
-			Console.WriteLine(cam._looking + " and " + cam.getLooking() + " and " +
-			                  cam.getLooking());
+			Console.WriteLine(cam.Looking + " and " + cam.getLookingNoRot());
+			RenderController.PrepareRendering(this);
 			Invoke(_callInvoke);
 		}
 
@@ -136,21 +136,25 @@ namespace AsciiFuntimeLand
 				case Keys.W:
 					e.SuppressKeyPress = true;
 					cam.coords = new Vector3(cam.coords.X + cam.getLooking().X, cam.coords.Y + cam.getLooking().Y, cam.coords.Z);
+					RenderController.PrepareRendering(this);
 					Invoke(_callInvoke);
 					break;
 				case Keys.S:
 					e.SuppressKeyPress = true;
 					cam.coords = new Vector3(cam.coords.X - cam.getLooking().X, cam.coords.Y - cam.getLooking().Y, cam.coords.Z);
+					RenderController.PrepareRendering(this);
 					Invoke(_callInvoke);
 					break;
 				case Keys.A:
 					e.SuppressKeyPress = true;
 					cam.coords = new Vector3(cam.coords.X + cam.getLooking(-90).X, cam.coords.Y + cam.getLooking(-90).Y, cam.coords.Z);
+					RenderController.PrepareRendering(this);
 					Invoke(_callInvoke);
 					break;
 				case Keys.D:
 					e.SuppressKeyPress = true;
 					cam.coords = new Vector3(cam.coords.X + cam.getLooking(90).X, cam.coords.Y + cam.getLooking(90).Y, cam.coords.Z);
+					RenderController.PrepareRendering(this);
 					Invoke(_callInvoke);
 					break;
 			}

@@ -4,32 +4,44 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AsciiFuntimeLand
 {
 	public class RenderController
 	{
 		private const double heightConstant = 1.67708313;
-		private static readonly Point step = new Point(7, 8);
-		private static readonly Vector2 FOV = new Vector2(0.5f, 0.5f); 
+		private const double widthConstant = 0.76367188;
+		private static readonly Vector2 step = new Vector2((float) (8 * widthConstant), (float)(8 * heightConstant));
+		private static readonly Vector2 FOV = new Vector2(1.1f, 1.1f); 
 		private static RenderableObject.RaytraceResult res;
 		private static RenderableObject.RaytraceResult bestRes;
 
+		private static bool beingModified = false;
+
+		private static string[] lines;
+
 		private static readonly List<RenderableObject.RaytraceResult> layersMatrix = new List<RenderableObject.RaytraceResult>();
 		private static readonly Dictionary<Color, StringBuilder> layers = new Dictionary<Color, StringBuilder>();
-
+		private static readonly List<Color> activeColors = new List<Color>();
+		
 		public static void Dispose()
 		{
 		}
 
-		public static void DoRendering(Form1 form, Graphics formGraphics)
+		public static void PrepareRendering(Form1 form)
 		{
+			if (beingModified)
+				return;
+			beingModified = true;
+
 			layersMatrix.Clear();
+			activeColors.Clear();
 			foreach (StringBuilder sb in layers.Values) sb.Clear();
 			
-			for (int y = 0; y < form.Size.Height; y += step.Y)
+			for (double y = 0; y < form.Size.Height; y += step.Y)
 			{
-				for (int x = 0; x < form.Size.Width; x += step.X)
+				for (double x = 0; x < form.Size.Width; x += step.X)
 				{
 					bestRes = RenderableObject.RaytraceResult.EMPTY;
 					foreach (RenderableObject obj in RenderableObject.ObjectRegistry)
@@ -47,6 +59,8 @@ namespace AsciiFuntimeLand
 					layersMatrix.Add(bestRes);
 					if (bestRes.color != Color.Empty && !layers.ContainsKey(bestRes.color))
 						layers.Add(bestRes.color, new StringBuilder());
+					if (!activeColors.Contains(bestRes.color))
+						activeColors.Add(bestRes.color);
 				}
 
 				layersMatrix.Add(null);
@@ -54,7 +68,7 @@ namespace AsciiFuntimeLand
 
 			foreach (RenderableObject.RaytraceResult rtr in layersMatrix)
 			{
-				foreach (Color color in layers.Keys)
+				foreach (Color color in activeColors)
 				{
 					if (rtr == null)
 						layers[color].Append('\n');
@@ -70,18 +84,32 @@ namespace AsciiFuntimeLand
 				}
 			}
 
-			foreach (Color color in layers.Keys)
+			beingModified = false;
+		}
+
+		public static void DoRendering(Form1 form, Graphics formGraphics)
+		{
+			if (beingModified)
+				return;
+			beingModified = true;
+			foreach (Color color in activeColors)
 			{
 				//Console.WriteLine(formGraphics.MeasureString(layers[color].ToString(), form._drawFont));
-				string[] lines = layers[color].ToString().Split('\n');
+				lines = layers[color].ToString().Split('\n');
 				for (int i = 0; i < lines.Length; i++)
 				{
 					if (lines[i].Trim().Length > 0)
-						form.DrawString(lines[i], new Point(0, (int)Math.Ceiling(step.Y * heightConstant * i)), formGraphics, form._drawFont, color);
+					{
+						form.DrawString(lines[i], new Point(0, (int) Math.Ceiling(step.Y * i)), formGraphics, form._drawFont, color);
+						//Console.WriteLine("Overhang: " + (form.Width - formGraphics.MeasureString(lines[i], form._drawFont).Width));
+						//form.DrawString(lines[i], new Point(0, (int) Math.Ceiling(step.Y * i)), formGraphics, form._drawFont, color);
+					}
 				}
 				//if (layers[color].ToString().Trim().Length != 0)
 					//form.DrawString(layers[color].ToString().Replace("[ \r\n\t]+$", ""), new Point(0, 0), formGraphics, form._drawFont, color);
 			}
+
+			beingModified = false;
 		}
 
 		public static HashSet<Color> registeredColors = new HashSet<Color>();

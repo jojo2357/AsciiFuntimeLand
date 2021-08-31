@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 
 namespace AsciiFuntimeLand
 {
-	public class RenderableObject
+	public partial class RenderableObject
 	{
 		public static readonly List<RenderableObject> ObjectRegistry = new List<RenderableObject>();
 		public Vector3 dims { get; }
@@ -113,35 +112,6 @@ namespace AsciiFuntimeLand
 			}
 
 			return ' ';
-		}
-
-		public class RaytraceResult
-		{
-			public char text { get; }
-			public bool result { get; }
-			public float dist { get; }
-			public Color color { get; }
-
-			private static Color holdercolor;
-
-			public static RaytraceResult EMPTY = new RaytraceResult(' ', false, -1, Color.Empty.ToArgb());
-
-			public RaytraceResult(char txt, bool res, float dst, int kolor)
-			{
-				text = txt;
-				result = res;
-				dist = Math.Abs(dst);
-				holdercolor = RenderController.createColor(kolor);
-				color = holdercolor == Color.Empty ? Color.FromArgb(kolor) : holdercolor;
-			}
-
-			public RaytraceResult(char txt, bool res, float dst, int r, int g, int b) : this(txt, res, dst, r << 16 | g << 8 | b)
-			{
-			}
-
-			public RaytraceResult(char txt, bool res, float dst, RenderableObject obj) : this(txt, res, dst, ((int) (obj.br / Math.Sqrt(dst)) / 16 * 16) << 16 | ((int) (obj.bg / Math.Sqrt(dst)) / 16 * 16) << 8 | ((int) (obj.bb / Math.Sqrt(dst)) / 16 * 16))
-			{
-			}
 		}
 	}
 }
