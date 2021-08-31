@@ -59,12 +59,14 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="ObjectParts\RenderableFace.cs" />
+    <Compile Include="ObjectParts\SquareFace.cs" />
+    <Compile Include="Objects\Cube.cs" />
+    <Compile Include="Objects\RenderablePlane.cs" />
+    <Compile Include="Objects\RenderableObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RenderableFace.cs" />
-    <Compile Include="RenderableObject.cs" />
     <Compile Include="RenderController.cs" />
-    <Compile Include="SquareFace.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

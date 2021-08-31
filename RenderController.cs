@@ -14,14 +14,14 @@ namespace AsciiFuntimeLand
 		private const double widthConstant = 0.76367188;
 		private static readonly Vector2 step = new Vector2((float) (8 * widthConstant), (float)(8 * heightConstant));
 		private static readonly Vector2 FOV = new Vector2(1.1f, 1.1f); 
-		private static RenderableObject.RaytraceResult res;
-		private static RenderableObject.RaytraceResult bestRes;
+		private static RaytraceResult res;
+		private static RaytraceResult bestRes;
 
 		private static bool beingModified = false;
 
 		private static string[] lines;
 
-		private static readonly List<RenderableObject.RaytraceResult> layersMatrix = new List<RenderableObject.RaytraceResult>();
+		private static readonly List<RaytraceResult> layersMatrix = new List<RaytraceResult>();
 		private static readonly Dictionary<Color, StringBuilder> layers = new Dictionary<Color, StringBuilder>();
 		private static readonly List<Color> activeColors = new List<Color>();
 		
@@ -43,13 +43,13 @@ namespace AsciiFuntimeLand
 			{
 				for (double x = 0; x < form.Size.Width; x += step.X)
 				{
-					bestRes = RenderableObject.RaytraceResult.EMPTY;
+					bestRes = RaytraceResult.EMPTY;
 					foreach (RenderableObject obj in RenderableObject.ObjectRegistry)
 					{
 						res = obj.Raytrace(form.cam, new Vector2((float) ((x - form.Size.Width / 2.0) / form.Size.Width * (2 * FOV.X)), (float) ((y - form.Size.Height / 2.0) / form.Size.Height * (-2 * FOV.Y))));
 						if (res.result)
 						{
-							if (bestRes == RenderableObject.RaytraceResult.EMPTY)
+							if (bestRes == RaytraceResult.EMPTY)
 								bestRes = res;
 							else if (bestRes.dist > res.dist)
 								bestRes = res;
@@ -66,7 +66,7 @@ namespace AsciiFuntimeLand
 				layersMatrix.Add(null);
 			}
 
-			foreach (RenderableObject.RaytraceResult rtr in layersMatrix)
+			foreach (RaytraceResult rtr in layersMatrix)
 			{
 				foreach (Color color in activeColors)
 				{

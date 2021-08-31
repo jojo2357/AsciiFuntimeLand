@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Numerics;
 
 namespace AsciiFuntimeLand
@@ -18,17 +19,17 @@ namespace AsciiFuntimeLand
 			_pointD = (pointA - pointB) + (pointC - pointB);
 			plane = Plane.CreateFromVertices(pointA, pointB, pointC);
 		}
-		public override RenderableObject.RaytraceResult Raytrace(Camera camera, Vector2 offset)
+		public override RaytraceResult Raytrace(Vector3 looking, Vector3 position)
 		{
-			if (intersects(_pointA, plane.Normal, camera.coords, camera.getLookingNoRot(offset)))
+			if (intersects(_pointA, plane.Normal, position, looking))
 			{
-				Vector3 intersect = lineIntersection(_pointA, plane.Normal, camera.coords, camera.getLookingNoRot(offset));
-				if ((_pointA - _pointB).Length() + (_pointC - _pointB).Length() < (_pointA - intersect).Length() + (_pointC - intersect).Length())
-					return RenderableObject.RaytraceResult.EMPTY;
+				Nullable<Vector3> intersectUnchecked = lineIntersection(_pointA, plane.Normal, position, looking);
+				if (intersectUnchecked == null || (_pointA - _pointB).Length() + (_pointC - _pointB).Length() < (_pointA - intersectUnchecked.Value).Length() + (_pointC - intersectUnchecked.Value).Length())
+					return RaytraceResult.EMPTY;
 				else 
-					return new RenderableObject.RaytraceResult(renderChar, true, (camera.coords - intersect).Length(), Color.White.ToArgb());
+					return new RaytraceResult(renderChar, true, (position - intersectUnchecked.Value).Length(), Color.White.ToArgb());
 			}
-			return RenderableObject.RaytraceResult.EMPTY;
+			return RaytraceResult.EMPTY;
 		}
 
 		public override void Translate(Vector3 direction, float magnitude)

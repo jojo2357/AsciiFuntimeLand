@@ -23,9 +23,10 @@ namespace AsciiFuntimeLand
         {
 	        Debug.WriteLine("Welcome");
             //new RenderableObject();
-            new RenderableObject(new Vector3(1, 1, 1), new Vector3(1, 1, 1), '!', Color.White);
+            new RenderablePlane(new SquareFace('@', new Vector3(255, 255, -1), new Vector3(-255, 255, -1), new Vector3(-255, -255, -1)));
+            /*new RenderableObject(new Vector3(1, 1, 1), new Vector3(1, 1, 1), '!', Color.White);
             new RenderableObject(new Vector3(1, 1, 1), new Vector3(2, -2, 2), '#', Color.Red);
-            new RenderableObject(new Vector3(255, 255, 1), new Vector3(-128, -128, -2f), '@', Color.Cyan);
+            new RenderableObject(new Vector3(255, 255, 1), new Vector3(-128, -128, -2f), '@', Color.Cyan);*/
             //Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
