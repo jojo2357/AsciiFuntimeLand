@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Text.RegularExpressions;
+using static AsciiFuntimeLand.Program;
 
 namespace AsciiFuntimeLand
 {
@@ -12,24 +11,26 @@ namespace AsciiFuntimeLand
 	{
 		private const double heightConstant = 1.67708313;
 		private const double widthConstant = 0.76367188;
-		private static readonly Vector2 step = new Vector2((float) (8 * widthConstant), (float)(8 * heightConstant));
-		private static readonly Vector2 FOV = new Vector2(1.1f, 1.1f); 
+		private static readonly Vector2 step = new Vector2((float) (8 * widthConstant), (float) (8 * heightConstant));
+		private static readonly Vector2 FOV = new Vector2(1.1f, 1.1f);
 		private static RaytraceResult res;
 		private static RaytraceResult bestRes;
 
-		private static bool beingModified = false;
+		private static bool beingModified;
 
 		private static string[] lines;
 
 		private static readonly List<RaytraceResult> layersMatrix = new List<RaytraceResult>();
 		private static readonly Dictionary<Color, StringBuilder> layers = new Dictionary<Color, StringBuilder>();
 		private static readonly List<Color> activeColors = new List<Color>();
-		
+
+		public static HashSet<Color> registeredColors = new HashSet<Color>();
+
 		public static void Dispose()
 		{
 		}
 
-		public static void PrepareRendering(Form1 form)
+		public static void PrepareRendering()
 		{
 			if (beingModified)
 				return;
@@ -38,15 +39,15 @@ namespace AsciiFuntimeLand
 			layersMatrix.Clear();
 			activeColors.Clear();
 			foreach (StringBuilder sb in layers.Values) sb.Clear();
-			
-			for (double y = 0; y < form.Size.Height; y += step.Y)
+
+			for (double y = 0; y < screenManager.Size.Height; y += step.Y)
 			{
-				for (double x = 0; x < form.Size.Width; x += step.X)
+				for (double x = 0; x < screenManager.Size.Width; x += step.X)
 				{
 					bestRes = RaytraceResult.EMPTY;
-					foreach (RenderableObject obj in RenderableObject.ObjectRegistry)
+					foreach (RenderableObject obj in Program.screenManager.currentWorld.RenderableObjects)
 					{
-						res = obj.Raytrace(form.cam, new Vector2((float) ((x - form.Size.Width / 2.0) / form.Size.Width * (2 * FOV.X)), (float) ((y - form.Size.Height / 2.0) / form.Size.Height * (-2 * FOV.Y))));
+						res = obj.Raytrace(screenManager.cam, new Vector2((float) ((x - screenManager.Size.Width / 2.0) / screenManager.Size.Width * (2 * FOV.X)), (float) ((y - screenManager.Size.Height / 2.0) / screenManager.Size.Height * (-2 * FOV.Y))));
 						if (res.result)
 						{
 							if (bestRes == RaytraceResult.EMPTY)
@@ -67,27 +68,23 @@ namespace AsciiFuntimeLand
 			}
 
 			foreach (RaytraceResult rtr in layersMatrix)
-			{
-				foreach (Color color in activeColors)
+			foreach (Color color in activeColors)
+				if (rtr == null)
 				{
-					if (rtr == null)
-						layers[color].Append('\n');
-					else
-					{
-						if (rtr.color == color)
-						{
-							layers[color].Append(rtr.text);
-						}
-						else
-							layers[color].Append(' ');
-					}
+					layers[color].Append('\n');
 				}
-			}
+				else
+				{
+					if (rtr.color == color)
+						layers[color].Append(rtr.text);
+					else
+						layers[color].Append(' ');
+				}
 
 			beingModified = false;
 		}
 
-		public static void DoRendering(Form1 form, Graphics formGraphics)
+		public static void DoRendering(ScreenManager form, Graphics formGraphics)
 		{
 			if (beingModified)
 				return;
@@ -97,38 +94,28 @@ namespace AsciiFuntimeLand
 				//Console.WriteLine(formGraphics.MeasureString(layers[color].ToString(), form._drawFont));
 				lines = layers[color].ToString().Split('\n');
 				for (int i = 0; i < lines.Length; i++)
-				{
 					if (lines[i].Trim().Length > 0)
-					{
 						form.DrawString(lines[i], new Point(0, (int) Math.Ceiling(step.Y * i)), formGraphics, form._drawFont, color);
-						//Console.WriteLine("Overhang: " + (form.Width - formGraphics.MeasureString(lines[i], form._drawFont).Width));
-						//form.DrawString(lines[i], new Point(0, (int) Math.Ceiling(step.Y * i)), formGraphics, form._drawFont, color);
-					}
-				}
+					//Console.WriteLine("Overhang: " + (form.Width - formGraphics.MeasureString(lines[i], form._drawFont).Width));
+					//form.DrawString(lines[i], new Point(0, (int) Math.Ceiling(step.Y * i)), formGraphics, form._drawFont, color);
 				//if (layers[color].ToString().Trim().Length != 0)
-					//form.DrawString(layers[color].ToString().Replace("[ \r\n\t]+$", ""), new Point(0, 0), formGraphics, form._drawFont, color);
+				//form.DrawString(layers[color].ToString().Replace("[ \r\n\t]+$", ""), new Point(0, 0), formGraphics, form._drawFont, color);
 			}
 
 			beingModified = false;
 		}
 
-		public static HashSet<Color> registeredColors = new HashSet<Color>();
-
 		public static Color createColor(int argb)
 		{
 			foreach (Color color in registeredColors)
-			{
 				if (color.ToArgb() == argb)
 					return color;
-			}
 
 			registeredColors.Add(Color.FromArgb(argb));
 			//recursion scary, better to repeat and then force quit than inf loop
 			foreach (Color color in registeredColors)
-			{
 				if (color.ToArgb() == argb)
 					return color;
-			}
 
 			throw new Exception("This should never happen, so if it did, you're fucked, sorry.");
 		}

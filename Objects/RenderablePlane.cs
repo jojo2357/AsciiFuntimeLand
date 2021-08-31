@@ -1,10 +1,8 @@
-using System.Numerics;
-
 namespace AsciiFuntimeLand
 {
 	public class RenderablePlane : RenderableObject
 	{
-		public RenderablePlane(SquareFace face) : base()
+		public RenderablePlane(World world, SquareFace face): base(world)
 		{
 			faces = new RenderableFace[1];
 			faces[0] = face;

@@ -1,6 +1,6 @@
 ﻿namespace AsciiFuntimeLand
 {
-	partial class Form1
+	partial class ScreenManager
 	{
 		/// <summary>
 		///  Required designer variable.

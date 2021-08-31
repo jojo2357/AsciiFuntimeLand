@@ -6,11 +6,6 @@ namespace AsciiFuntimeLand
 {
 	public class RaytraceResult
 	{
-		public char text { get; }
-		public bool result { get; }
-		public float dist { get; }
-		public Color color { get; }
-
 		private static Color holdercolor;
 
 		public static RaytraceResult EMPTY = new RaytraceResult(' ', false, float.MaxValue, Color.Empty.ToArgb());
@@ -24,16 +19,21 @@ namespace AsciiFuntimeLand
 			color = holdercolor == Color.Empty ? Color.FromArgb(kolor) : holdercolor;
 		}
 
-		public RaytraceResult(char txt, bool res, float dst, int r, int g, int b) : this(txt, res, dst, r << 16 | g << 8 | b)
+		public RaytraceResult(char txt, bool res, float dst, int r, int g, int b) : this(txt, res, dst, (r << 16) | (g << 8) | b)
 		{
 		}
+
+		public char text { get; }
+		public bool result { get; }
+		public float dist { get; }
+		public Color color { get; }
 	}
 
 	public abstract class RenderableFace
 	{
+		private int br, bg, bb;
 		public char renderChar = '#';
 		public bool visible = true;
-		private int br, bg, bb;
 
 		protected RenderableFace() : this('!')
 		{
@@ -50,23 +50,17 @@ namespace AsciiFuntimeLand
 
 		public static bool intersects(Vector3 planePoint, Vector3 planeNormal, Vector3 linePoint, Vector3 lineDirection)
 		{
-			if (Vector3.Dot(planeNormal, Vector3.Normalize(lineDirection)) == 0)
-			{
-				return false;
-			}
+			if (Vector3.Dot(planeNormal, Vector3.Normalize(lineDirection)) == 0) return false;
 
 			return true;
 		}
 
-		public static Nullable<Vector3> lineIntersection(Vector3 planePoint, Vector3 planeNormal, Vector3 linePoint, Vector3 lineDirection)
+		public static Vector3? lineIntersection(Vector3 planePoint, Vector3 planeNormal, Vector3 linePoint, Vector3 lineDirection)
 		{
-			if (!intersects(planePoint, planeNormal, linePoint, lineDirection))
-			{
-				return null;
-			}
+			if (!intersects(planePoint, planeNormal, linePoint, lineDirection)) return null;
 
 			float t = (Vector3.Dot(planeNormal, planePoint) - Vector3.Dot(planeNormal, linePoint)) / Vector3.Dot(planeNormal, Vector3.Normalize(lineDirection));
-			if (t < 0) 
+			if (t < 0)
 				return null;
 			return linePoint + Vector3.Normalize(lineDirection) * t;
 		}

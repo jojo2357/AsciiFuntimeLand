@@ -1,38 +1,12 @@
 ﻿using System;
-using System.Drawing.Drawing2D;
 using System.Numerics;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using Quaternion = System.Numerics.Quaternion;
 
 namespace AsciiFuntimeLand
 {
 	public class Camera
 	{
-		public Vector3 Looking
-		{
-			get { return _looking; }
-			set
-			{
-				_looking = value;
-				_up = new Vector3((float) (Math.Sin((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)), 
-					(float) (Math.Cos((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)), 
-					(float) Math.Sin((_looking.Y + 90) * Math.PI / 180));
-				_right = Vector3.Cross(getLookingNoRot(), getUp());
-				_lookingResolved = new Vector3((float) (Math.Sin((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y) * Math.PI / 180)), 
-					(float) (Math.Cos((_looking.X) * Math.PI / 180) * Math.Cos((_looking.Y) * Math.PI / 180)), 
-					(float) Math.Sin((_looking.Y) * Math.PI / 180));
-				u = Vector3.Normalize(getRight());
-				v = Vector3.Normalize(_up);
-			}
-		}
-
 		private Vector3 _looking;
 
-		public Vector3 _up { get; private set; }
-		public Vector3 _right { get; private set; }
-		public Vector3 _lookingResolved { get; private set; }
-		
 		private Vector3 u;
 		private Vector3 v;
 
@@ -41,6 +15,28 @@ namespace AsciiFuntimeLand
 			coords = new Vector3();
 			setLooking(new Vector3());
 		}
+
+		public Vector3 Looking
+		{
+			get => _looking;
+			set
+			{
+				_looking = value;
+				_up = new Vector3((float) (Math.Sin(_looking.X * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)),
+					(float) (Math.Cos(_looking.X * Math.PI / 180) * Math.Cos((_looking.Y + 90) * Math.PI / 180)),
+					(float) Math.Sin((_looking.Y + 90) * Math.PI / 180));
+				_right = Vector3.Cross(getLookingNoRot(), getUp());
+				_lookingResolved = new Vector3((float) (Math.Sin(_looking.X * Math.PI / 180) * Math.Cos(_looking.Y * Math.PI / 180)),
+					(float) (Math.Cos(_looking.X * Math.PI / 180) * Math.Cos(_looking.Y * Math.PI / 180)),
+					(float) Math.Sin(_looking.Y * Math.PI / 180));
+				u = Vector3.Normalize(getRight());
+				v = Vector3.Normalize(_up);
+			}
+		}
+
+		public Vector3 _up { get; private set; }
+		public Vector3 _right { get; private set; }
+		public Vector3 _lookingResolved { get; private set; }
 
 		public Vector3 coords { get; set; }
 
@@ -53,7 +49,7 @@ namespace AsciiFuntimeLand
 		{
 			return _up;
 		}
-		
+
 		private Vector3 getRight()
 		{
 			return _right;
@@ -71,7 +67,7 @@ namespace AsciiFuntimeLand
 				(float) Math.Cos((_looking.X + offset.X) * Math.PI / 180), (float) Math.Sin(
 					(_looking.Y + offset.Y) * Math.PI / 180), _looking.Z);
 		}
-		
+
 		public Vector4 getLooking(int offset)
 		{
 			return new Vector4((float) Math.Sin((_looking.X + offset) * Math.PI / 180),
@@ -100,7 +96,6 @@ namespace AsciiFuntimeLand
 		public void AddLooking(Vector3 vec)
 		{
 			SetLooking(_looking.X + vec.X, _looking.Y + vec.Y, _looking.Z + vec.Z);
-			
 		}
 
 		public void AddLooking(Vector2 vec)
