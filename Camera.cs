@@ -7,6 +7,8 @@ namespace AsciiFuntimeLand
 	{
 		private Vector3 _looking;
 
+		public Vector3 coords;
+
 		private Vector3 u;
 		private Vector3 v;
 
@@ -37,8 +39,6 @@ namespace AsciiFuntimeLand
 		public Vector3 _up { get; private set; }
 		public Vector3 _right { get; private set; }
 		public Vector3 _lookingResolved { get; private set; }
-
-		public Vector3 coords { get; set; }
 
 		private void setLooking(Vector3 value)
 		{
@@ -96,6 +96,11 @@ namespace AsciiFuntimeLand
 		public void AddLooking(Vector3 vec)
 		{
 			SetLooking(_looking.X + vec.X, _looking.Y + vec.Y, _looking.Z + vec.Z);
+		}
+
+		public void AddLooking(float x, float y)
+		{
+			SetLooking(_looking.X + x, Math.Max(Math.Min(_looking.Y + y, 90), -90), _looking.Z);
 		}
 
 		public void AddLooking(Vector2 vec)

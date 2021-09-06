@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.Numerics;
+using Color = System.Drawing.Color;
 
 namespace AsciiFuntimeLand
 {
@@ -34,6 +34,7 @@ namespace AsciiFuntimeLand
 		private int br, bg, bb;
 		public char renderChar = '#';
 		public bool visible = true;
+		private static Vector3 _normalizedLine;
 
 		protected RenderableFace() : this('!')
 		{
@@ -50,19 +51,20 @@ namespace AsciiFuntimeLand
 
 		public static bool intersects(Vector3 planePoint, Vector3 planeNormal, Vector3 linePoint, Vector3 lineDirection)
 		{
-			if (Vector3.Dot(planeNormal, Vector3.Normalize(lineDirection)) == 0) return false;
-
-			return true;
+			return Vector3.Dot(planeNormal, lineDirection) != 0;
 		}
 
 		public static Vector3? lineIntersection(Vector3 planePoint, Vector3 planeNormal, Vector3 linePoint, Vector3 lineDirection)
 		{
-			if (!intersects(planePoint, planeNormal, linePoint, lineDirection)) return null;
-
-			float t = (Vector3.Dot(planeNormal, planePoint) - Vector3.Dot(planeNormal, linePoint)) / Vector3.Dot(planeNormal, Vector3.Normalize(lineDirection));
+			_normalizedLine = Vector3.Normalize(lineDirection);
+			if (!intersects(planePoint, planeNormal, linePoint, _normalizedLine)) return null;
+			
+			float t = (Vector3.Dot(planeNormal, planePoint) - Vector3.Dot(planeNormal, linePoint)) / Vector3.Dot(planeNormal, _normalizedLine);
 			if (t < 0)
 				return null;
-			return linePoint + Vector3.Normalize(lineDirection) * t;
+			return linePoint + _normalizedLine * t;
 		}
+
+		protected abstract int GetColor(float dist);
 	}
 }

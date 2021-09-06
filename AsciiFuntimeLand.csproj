@@ -53,26 +53,42 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Hitboxes\Hitbox.cs" />
+    <Compile Include="Hitboxes\Hitcube.cs" />
+    <Compile Include="Hitboxes\ICollidable.cs" />
+    <Compile Include="HUDManager.cs" />
+    <Compile Include="InputManagers\InputManager.cs" />
+    <Compile Include="InputManagers\MainManager.cs" />
+    <Compile Include="InputManagers\MainMenuManager.cs" />
+    <Compile Include="ITickable.cs" />
+    <Compile Include="ObjectParts\ColorableSquareFace.cs" />
+    <Compile Include="ObjectParts\RenderableFace.cs" />
+    <Compile Include="ObjectParts\SquareFace.cs" />
+    <Compile Include="Objects\BouncyCube.cs" />
+    <Compile Include="Objects\BouncySphere.cs" />
+    <Compile Include="Objects\RenderableFacedObject.cs" />
+    <Compile Include="Objects\RenderableRectangularPrism.cs" />
+    <Compile Include="Objects\RenderableObject.cs" />
+    <Compile Include="Objects\RenderablePlane.cs" />
+    <Compile Include="Objects\RenderableWall.cs" />
+    <Compile Include="Objects\Sphere.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RenderController.cs" />
     <Compile Include="ScreenManager.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ScreenManager.Designer.cs">
       <DependentUpon>ScreenManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="ITickable.cs" />
-    <Compile Include="MouseManager.cs" />
-    <Compile Include="ObjectParts\RenderableFace.cs" />
-    <Compile Include="ObjectParts\SquareFace.cs" />
-    <Compile Include="Objects\RectangularPrism.cs" />
-    <Compile Include="Objects\RenderablePlane.cs" />
-    <Compile Include="Objects\RenderableObject.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RenderController.cs" />
     <Compile Include="SynchronizationManager.cs" />
+    <Compile Include="TemplateObjects\RectangularPrism.cs" />
+    <Compile Include="TemplateObjects\SquarePlane.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="World.cs" />
+    <Compile Include="Worlds\MenuWorld.cs" />
+    <Compile Include="Worlds\RealWorld.cs" />
+    <Compile Include="Worlds\World.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

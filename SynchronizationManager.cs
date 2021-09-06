@@ -9,6 +9,7 @@ namespace AsciiFuntimeLand
 			while (Program.screenManager.open)
 			{
 				Thread.Sleep(Program.screenManager.sleepAmount);
+				Program.screenManager.currentWorld.UpdateTickables();
 				Program.screenManager.UpdateInput();
 			}
 		}

@@ -9,8 +9,8 @@ namespace AsciiFuntimeLand
 {
 	public class RenderController
 	{
-		private const double heightConstant = 1.67708313;
-		private const double widthConstant = 0.76367188;
+		private const double heightConstant = 1.6;//1.67708313;
+		private const double widthConstant = 0.9;//0.76367188;
 		private static readonly Vector2 step = new Vector2((float) (8 * widthConstant), (float) (8 * heightConstant));
 		private static readonly Vector2 FOV = new Vector2(1.1f, 1.1f);
 		private static RaytraceResult res;
@@ -21,8 +21,8 @@ namespace AsciiFuntimeLand
 		private static string[] lines;
 
 		private static readonly List<RaytraceResult> layersMatrix = new List<RaytraceResult>();
-		private static readonly Dictionary<Color, StringBuilder> layers = new Dictionary<Color, StringBuilder>();
-		private static readonly List<Color> activeColors = new List<Color>();
+		private static readonly Dictionary<Color, List<char>> layers = new Dictionary<Color, List<char>>();
+		private static readonly HashSet<Color> activeColors = new HashSet<Color>();
 
 		public static HashSet<Color> registeredColors = new HashSet<Color>();
 
@@ -30,7 +30,7 @@ namespace AsciiFuntimeLand
 		{
 		}
 
-		public static void PrepareRendering()
+		public static void PrepareRaytraceRendering()
 		{
 			if (beingModified)
 				return;
@@ -38,16 +38,16 @@ namespace AsciiFuntimeLand
 
 			layersMatrix.Clear();
 			activeColors.Clear();
-			foreach (StringBuilder sb in layers.Values) sb.Clear();
+			foreach (List<char> sb in layers.Values) sb.Clear();
 
 			for (double y = 0; y < screenManager.Size.Height; y += step.Y)
 			{
 				for (double x = 0; x < screenManager.Size.Width; x += step.X)
 				{
 					bestRes = RaytraceResult.EMPTY;
-					foreach (RenderableObject obj in Program.screenManager.currentWorld.RenderableObjects)
+					foreach (RenderableObject obj in screenManager.currentWorld.RenderableObjects)
 					{
-						res = obj.Raytrace(screenManager.cam, new Vector2((float) ((x - screenManager.Size.Width / 2.0) / screenManager.Size.Width * (2 * FOV.X)), (float) ((y - screenManager.Size.Height / 2.0) / screenManager.Size.Height * (-2 * FOV.Y))));
+						res = obj.Raytrace(screenManager.currentWorld.camera, new Vector2((float) ((x - screenManager.Size.Width / 2.0) / screenManager.Size.Width * (2 * FOV.X)), (float) ((y - screenManager.Size.Height / 2.0) / screenManager.Size.Height * (-2 * FOV.Y))));
 						if (res.result)
 						{
 							if (bestRes == RaytraceResult.EMPTY)
@@ -59,7 +59,7 @@ namespace AsciiFuntimeLand
 
 					layersMatrix.Add(bestRes);
 					if (bestRes.color != Color.Empty && !layers.ContainsKey(bestRes.color))
-						layers.Add(bestRes.color, new StringBuilder());
+						layers.Add(bestRes.color, new List<char>());
 					if (!activeColors.Contains(bestRes.color))
 						activeColors.Add(bestRes.color);
 				}
@@ -71,14 +71,14 @@ namespace AsciiFuntimeLand
 			foreach (Color color in activeColors)
 				if (rtr == null)
 				{
-					layers[color].Append('\n');
+					layers[color].Add('\n');
 				}
 				else
 				{
 					if (rtr.color == color)
-						layers[color].Append(rtr.text);
+						layers[color].Add(rtr.text);
 					else
-						layers[color].Append(' ');
+						layers[color].Add(' ');
 				}
 
 			beingModified = false;
@@ -91,15 +91,10 @@ namespace AsciiFuntimeLand
 			beingModified = true;
 			foreach (Color color in activeColors)
 			{
-				//Console.WriteLine(formGraphics.MeasureString(layers[color].ToString(), form._drawFont));
-				lines = layers[color].ToString().Split('\n');
+				lines = new string(layers[color].ToArray()).Split('\n');
 				for (int i = 0; i < lines.Length; i++)
 					if (lines[i].Trim().Length > 0)
 						form.DrawString(lines[i], new Point(0, (int) Math.Ceiling(step.Y * i)), formGraphics, form._drawFont, color);
-					//Console.WriteLine("Overhang: " + (form.Width - formGraphics.MeasureString(lines[i], form._drawFont).Width));
-					//form.DrawString(lines[i], new Point(0, (int) Math.Ceiling(step.Y * i)), formGraphics, form._drawFont, color);
-				//if (layers[color].ToString().Trim().Length != 0)
-				//form.DrawString(layers[color].ToString().Replace("[ \r\n\t]+$", ""), new Point(0, 0), formGraphics, form._drawFont, color);
 			}
 
 			beingModified = false;
@@ -107,7 +102,9 @@ namespace AsciiFuntimeLand
 
 		public static void PostRendering(ScreenManager form, Graphics formGraphics)
 		{
-			
+			string hud;
+			if (screenManager.paused)
+				form.DrawString(hud = HUDManager.GetHudString(), new Point(form.Size.Width / 2 - (int) (formGraphics.MeasureString(hud, form._drawFont).Width / 2), 50), formGraphics, form._drawFont, Color.Lime, Color.Black);
 		}
 
 		public static Color createColor(int argb)
